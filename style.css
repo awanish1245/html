@@ -1,11 +1,19 @@
-h2{
-   color: rgb(239, 157, 3);
+*{
+    font-family:  'Courier New', Courier, monospace;
 }
-button {
-   background-color: blue;
-   color : white;
+
+h3{
+   color: purple;
 }
-p{
-   background-color: black;
-   color: white;
+#login {
+    background-color:white;
+}
+#signup{
+    background-color: red;
+    color: white;
+}
+/* descendant selectors */
+p a{
+    color: purple;
+    background-color : yellow;
 }
