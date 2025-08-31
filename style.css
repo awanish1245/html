@@ -17,3 +17,25 @@ p a{
     color: purple;
     background-color : yellow;
 }
+p+h3{
+    text-decoration:underline;
+}
+div>input{
+    background-color:darkgrey ;
+}
+input[type="text"]{
+    color: red;
+}
+input[type="password"]{
+    color: blueviolet;
+}
+button:active{
+    background-color:palevioletred
+}
+p:active{
+    font-weight:bold;
+    color:green;
+}
+input[type="radio"]:checked+label{
+    color:brown;
+}
