@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khetikaro - Smart Crop Advisory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --secondary: #ff9800;
+            --dark: #1b5e20;
+            --light: #e8f5e9;
+            --gray: #f5f5f5;
+            --text: #333;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .language-selector {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-selector:hover {
+            transform: scale(1.05);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .welcome-banner h2 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .weather-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .crop-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .crop-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .crop-item:last-child {
+            border-bottom: none;
+        }
+
+        .buy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            background: #e68900;
+        }
+
+        .camera-container {
+            position: relative;
+            height: 200px;
+            background: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #cameraPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            display: none;
+        }
+
+        .camera-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .capture-btn {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:focus, .buy-btn:focus {
+            outline: 2px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: var(--dark);
+        }
+
+        .secondary-btn {
+            background: var(--gray);
+            color: var(--text);
+        }
+
+        .secondary-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* Product Filters */
+        .product-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Market Prices Table */
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .market-table th, .market-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .market-table th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+
+        .market-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .price-up {
+            color: #4caf50;
+        }
+
+        .price-down {
+            color: #f44336;
+        }
+
+        /* Crop Calendar Styles */
+        .calendar-container {
+            margin-top: 15px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .calendar-month {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: #f9f9f9;
+            font-weight: 600;
+        }
+
+        .calendar-date {
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid #eee;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-date.active {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+        .calendar-crops {
+            font-size: 0.7rem;
+            color: var(--primary);
+            margin-top: 5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .app-download {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background: white;
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Language Change Animation */
+        .language-change {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-download {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .weather-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .market-table {
+                font-size: 0.9rem;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-seedling"></i>
+                    <h1 id="header-title">Khetikaro - Smart Crop Advisory</h1>
+                </div>
+                <select class="language-selector" id="languageSelector">
+                    <option value="hi">हिंदी</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="welcome-banner">
+                <h2 id="welcome-title">नमस्ते, किसान भाई!</h2>
+                <p id="welcome-subtitle">आपके फसल की पूरी देखभाल के लिए हमारा स्मार्ट सलाहकार सिस्टम</p>
+            </div>
+
+            <div class="feature-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span id="weather-title">मौसम और पूर्वानुमान</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="weather-info">
+                            <div>
+                                <h3 id="today-weather">आज का मौसम</h3>
+                                <p id="location">नई दिल्ली</p>
+                            </div>
+                            <div class="weather-temp" id="temperature">32°C</div>
+                        </div>
+                        <div class="weather-details">
+                            <div class="weather-detail">
+                                <i class="fas fa-wind"></i>
+                                <span id="wind-label">हवा</span>
+                                <span id="wind-speed">10 km/h</span>
+                            </div>
+                            <div class="weather-detail">
+                                <i class="fas fa-tint"></i>
+                                <span id="humidity-label">नमी</span>
+                                <span id="humidity">45%</span>
+                            </div>
+                            <div class="weather-detail">
+                                <i class="fas fa-cloud-rain"></i>
+                                <span id="rainfall-label">वर्षा</span>
+                                <span id="rainfall">10%</span>
+                            </div>
+                            <div class="weather-detail">
+                                <i class="fas fa-sun"></i>
+                                <span id="uv-label">UV</span>
+                                <span id="uv-index">6</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn primary-btn" onclick="showWeatherForecast()">
+                                <i class="fas fa-calendar-day"></i> <span id="forecast-btn">7 दिन का पूर्वानुमान</span>
+                            </button>
+                            <button class="action-btn secondary-btn" onclick="setWeatherAlert()">
+                                <i class="fas fa-bell"></i> <span id="alert-btn">अलर्ट सेट करें</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-camera"></i>
+                        <span id="crop-scan-title">क्रॉप स्कैन (AR विजन)</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="camera-container">
+                            <video id="cameraPreview" autoplay playsinline></video>
+                            <div class="camera-placeholder" id="cameraPlaceholder">
+                                <i class="fas fa-camera"></i>
+                                <span id="camera-window">कैमरा विंडो</span>
+                            </div>
+                            <div class="camera-controls" id="cameraControls">
+                                <button class="camera-btn capture-btn" id="captureBtn">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                                <button class="camera-btn" id="switchCameraBtn">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="camera-btn" id="closeCameraBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p id="crop-scan-desc">अपने फसल की तस्वीर लें या अपलोड करें रोग की पहचान के लिए</p>
+                        <div class="action-buttons">
+                            <button class="action-btn primary-btn" onclick="activateCamera()">
+                                <i class="fas fa-camera"></i> <span id="take-photo-btn">तस्वीर लें</span>
+                            </button>
+                            <button class="action-btn secondary-btn" onclick="uploadImage()">
+                                <i class="fas fa-upload"></i> <span id="upload-photo-btn">गैलरी से चुनें</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="products-title">अनुशंसित उत्पाद (50+ आइटम)</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-filters">
+                            <button class="filter-btn active" data-category="all" onclick="filterProducts('all')" id="filter-all">सभी</button>
+                            <button class="filter-btn" data-category="seeds" onclick="filterProducts('seeds')" id="filter-seeds">बीज</button>
+                            <button class="filter-btn" data-category="fertilizer" onclick="filterProducts('fertilizer')" id="filter-fertilizer">उर्वरक</button>
+                            <button class="filter-btn" data-category="pesticide" onclick="filterProducts('pesticide')" id="filter-pesticide">कीटनाशक</button>
+                            <button class="filter-btn" data-category="tools" onclick="filterProducts('tools')" id="filter-tools">उपकरण</button>
+                        </div>
+                        <ul class="crop-list" id="product-list">
+                            <!-- Products will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="crop-advice-title">फसल सलाह - मौसम अनुसार</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="weather-details" id="seasonal-crops">
+                            <!-- Seasonal crops will be dynamically added here -->
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn primary-btn" onclick="showCropCalendar()">
+                                <i class="fas fa-seedling"></i> <span id="calendar-btn">फसल कैलेंडर</span>
+                            </button>
+                            <button class="action-btn secondary-btn" onclick="showLearningResources()">
+                                <i class="fas fa-book"></i> <span id="learn-more-btn">और जानें</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="market-prices-title">बाजार भाव - निकटतम मंडी</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="market-info">
+                            <p id="market-location">निकटतम मंडी: <strong>आजमगढ़ कृषि उपज मंडी</strong></p>
+                            <p id="market-update">अंतिम अपडेट: आज सुबह 10:30 बजे</p>
+                        </div>
+                        <table class="market-table">
+                            <thead>
+                                <tr>
+                                    <th id="market-crop-header">फसल</th>
+                                    <th id="market-grade-header">ग्रेड</th>
+                                    <th id="market-price-header">मूल्य (प्रति क्विंटल)</th>
+                                    <th id="market-change-header">बदलाव</th>
+                                </tr>
+                            </thead>
+                            <tbody id="market-prices-data">
+                                <!-- Market prices will be dynamically added here -->
+                            </tbody>
+                        </table>
+                        <div class="action-buttons">
+                            <button class="action-btn primary-btn" onclick="refreshMarketPrices()">
+                                <i class="fas fa-sync-alt"></i> <span id="refresh-prices-btn">ताजा भाव लें</span>
+                            </button>
+                            <button class="action-btn secondary-btn" onclick="showPriceTrends()">
+                                <i class="fas fa-chart-bar"></i> <span id="trends-btn">रुझान देखें</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <h3 id="footer-title">Khetikaro - किसानों का डिजिटल साथी</h3>
+                <p id="footer-desc">हमारा उद्देश्य छोटे और सीमांत किसानों को आधुनिक तकनीक से लैस करना है</p>
+                
+                <div class="app-download">
+                    <a href="#" class="download-btn">
+                        <i class="fab fa-google-play"></i> <span id="google-play">Google Play</span>
+                    </a>
+                    <a href="#" class="download-btn">
+                        <i class="fab fa-apple"></i> <span id="app-store">App Store</span>
+                    </a>
+                </div>
+                
+                <p id="contact-info">संपर्क करें: support@Khetikaro.com | हेल्पलाइन: 1800-123-4567</p>
+                <p id="copyright">© 2023 Khetikaro. सर्वाधिकार सुरक्षित।</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Weather Forecast Modal -->
+    <div class="modal" id="weatherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="forecast-modal-title">7 दिन का मौसम पूर्वानुमान</h3>
+                <button class="close-btn" onclick="closeModal('weatherModal')">&times;</button>
+            </div>
+            <div id="weather-forecast-data">
+                <!-- Weather forecast data will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Links Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="product-modal-title">उत्पाद लिंक</h3>
+                <button class="close-btn" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div id="product-links">
+                <!-- Product links will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Analysis Modal -->
+    <div class="modal" id="analysisModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="analysis-modal-title">फसल विश्लेषण परिणाम</h3>
+                <button class="close-btn" onclick="closeModal('analysisModal')">&times;</button>
+            </div>
+            <div id="analysis-result">
+                <!-- Analysis result will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Calendar Modal -->
+    <div class="modal" id="calendarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="calendar-modal-title">फसल कैलेंडर - वार्षिक योजना</h3>
+                <button class="close-btn" onclick="closeModal('calendarModal')">&times;</button>
+            </div>
+            <div class="calendar-container">
+                <div class="calendar-nav">
+                    <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="calendar-month" id="calendar-month">जनवरी 2023</div>
+                    <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-grid" id="calendar-days">
+                    <!-- Calendar days will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Trends Modal -->
+    <div class="modal" id="trendsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="trends-modal-title">फसल मूल्य रुझान</h3>
+                <button class="close-btn" onclick="closeModal('trendsModal')">&times;</button>
+            </div>
+            <div id="trends-chart">
+                <canvas id="priceChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            hi: {
+                // Header
+                "header-title": "Khetikaro - स्मार्ट फसल सलाहकार",
+                
+                // Welcome Banner
+                "welcome-title": "नमस्ते, किसान भाई!",
+                "welcome-subtitle": "आपके फसल की पूरी देखभाल के लिए हमारा स्मार्ट सलाहकार सिस्टम",
+                
+                // Weather Card
+                "weather-title": "मौसम और पूर्वानुमान",
+                "today-weather": "आज का मौसम",
+                "wind-label": "हवा",
+                "humidity-label": "नमी",
+                "rainfall-label": "वर्षा",
+                "uv-label": "UV",
+                "forecast-btn": "7 दिन का पूर्वानुमान",
+                "alert-btn": "अलर्ट सेट करें",
+                
+                // Crop Scan Card
+                "crop-scan-title": "क्रॉप स्कैन (AR विजन)",
+                "camera-window": "कैमरा विंडो",
+                "crop-scan-desc": "अपने फसल की तस्वीर लें या अपलोड करें रोग की पहचान के लिए",
+                "take-photo-btn": "तस्वीर लें",
+                "upload-photo-btn": "गैलरी से चुनें",
+                
+                // Products Card
+                "products-title": "अनुशंसित उत्पाद (50+ आइटम)",
+                "filter-all": "सभी",
+                "filter-seeds": "बीज",
+                "filter-fertilizer": "उर्वरक",
+                "filter-pesticide": "कीटनाशक",
+                "filter-tools": "उपकरण",
+                "buy-btn": "खरीदें",
+                
+                // Crop Advice Card
+                "crop-advice-title": "फसल सलाह - मौसम अनुसार",
+                "calendar-btn": "फसल कैलेंडर",
+                "learn-more-btn": "और जानें",
+                
+                // Market Prices Card
+                "market-prices-title": "बाजार भाव - निकटतम मंडी",
+                "market-crop-header": "फसल",
+                "market-grade-header": "ग्रेड",
+                "market-price-header": "मूल्य (प्रति क्विंटल)",
+                "market-change-header": "बदलाव",
+                "refresh-prices-btn": "ताजा भाव लें",
+                "trends-btn": "रुझान देखें",
+                
+                // Footer
+                "footer-title": "Khetikaro - किसानों का डिजिटल साथी",
+                "footer-desc": "हमारा उद्देश्य छोटे और सीमांत किसानों को आधुनिक तकनीक से लैस करना है",
+                "google-play": "Google Play",
+                "app-store": "App Store",
+                "contact-info": "संपर्क करें: support@Khetikaro.com | हेल्पलाइन: 1800-123-4567",
+                "copyright": "© 2023 Khetikaro. सर्वाधिकार सुरक्षित।",
+                
+                // Modal Titles
+                "forecast-modal-title": "7 दिन का मौसम पूर्वानुमान",
+                "product-modal-title": "उत्पाद लिंक",
+                "analysis-modal-title": "फसल विश्लेषण परिणाम",
+                "calendar-modal-title": "फसल कैलेंडर - वार्षिक योजना",
+                "trends-modal-title": "फसल मूल्य रुझान",
+                
+                // Weather Forecast Days
+                "today": "आज",
+                "tomorrow": "कल",
+                "monday": "सोमवार",
+                "tuesday": "मंगलवार",
+                "wednesday": "बुधवार",
+                "thursday": "गुरुवार",
+                "friday": "शुक्रवार",
+                "saturday": "शनिवार",
+                
+                // Weather Conditions
+                "sunny": "धूप",
+                "cloudy": "बादल",
+                "rainy": "बारिश",
+                "partly-cloudy": "कुछ बादल",
+                
+                // Months
+                "january": "जनवरी",
+                "february": "फरवरी",
+                "march": "मार्च",
+                "april": "अप्रैल",
+                "may": "मई",
+                "june": "जून",
+                "july": "जुलाई",
+                "august": "अगस्त",
+                "september": "सितंबर",
+                "october": "अक्टूबर",
+                "november": "नवंबर",
+                "december": "दिसंबर"
+            },
+            en: {
+                // Header
+                "header-title": "Khetikaro - Smart Crop Advisory",
+                
+                // Welcome Banner
+                "welcome-title": "Hello, Farmer Friend!",
+                "welcome-subtitle": "Our smart advisory system for complete crop care",
+                
+                // Weather Card
+                "weather-title": "Weather & Forecast",
+                "today-weather": "Today's Weather",
+                "wind-label": "Wind",
+                "humidity-label": "Humidity",
+                "rainfall-label": "Rainfall",
+                "uv-label": "UV",
+                "forecast-btn": "7-Day Forecast",
+                "alert-btn": "Set Alert",
+                
+                // Crop Scan Card
+                "crop-scan-title": "Crop Scan (AR Vision)",
+                "camera-window": "Camera Window",
+                "crop-scan-desc": "Take or upload a photo of your crop for disease identification",
+                "take-photo-btn": "Take Photo",
+                "upload-photo-btn": "Choose from Gallery",
+                
+                // Products Card
+                "products-title": "Recommended Products (50+ Items)",
+                "filter-all": "All",
+                "filter-seeds": "Seeds",
+                "filter-fertilizer": "Fertilizer",
+                "filter-pesticide": "Pesticide",
+                "filter-tools": "Tools",
+                "buy-btn": "Buy",
+                
+                // Crop Advice Card
+                "crop-advice-title": "Crop Advice - Season Wise",
+                "calendar-btn": "Crop Calendar",
+                "learn-more-btn": "Learn More",
+                
+                // Market Prices Card
+                "market-prices-title": "Market Prices - Nearest Market",
+                "market-crop-header": "Crop",
+                "market-grade-header": "Grade",
+                "market-price-header": "Price (per quintal)",
+                "market-change-header": "Change",
+                "refresh-prices-btn": "Refresh Prices",
+                "trends-btn": "View Trends",
+                
+                // Footer
+                "footer-title": "Khetikaro - Farmer's Digital Companion",
+                "footer-desc": "Our mission is to equip small and marginal farmers with modern technology",
+                "google-play": "Google Play",
+                "app-store": "App Store",
+                "contact-info": "Contact: support@Khetikaro.com | Helpline: 1800-123-4567",
+                "copyright": "© 2023 Khetikaro. All rights reserved.",
+                
+                // Modal Titles
+                "forecast-modal-title": "7-Day Weather Forecast",
+                "product-modal-title": "Product Links",
+                "analysis-modal-title": "Crop Analysis Result",
+                "calendar-modal-title": "Crop Calendar - Annual Plan",
+                "trends-modal-title": "Crop Price Trends",
+                
+                // Weather Forecast Days
+                "today": "Today",
+                "tomorrow": "Tomorrow",
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                
+                // Weather Conditions
+                "sunny": "Sunny",
+                "cloudy": "Cloudy",
+                "rainy": "Rainy",
+                "partly-cloudy": "Partly Cloudy",
+                
+                // Months
+                "january": "January",
+                "february": "February",
+                "march": "March",
+                "april": "April",
+                "may": "May",
+                "june": "June",
+                "july": "July",
+                "august": "August",
+                "september": "September",
+                "october": "October",
+                "november": "November",
+                "december": "December"
+            }
+        };
+
+        // Simulated backend data with multilingual support
+        const backendData = {
+            weather: {
+                location: {
+                    hi: "नई दिल्ली",
+                    en: "New Delhi"
+                },
+                temperature: 32,
+                windSpeed: {
+                    hi: "10 km/h",
+                    en: "10 km/h"
+                },
+                humidity: {
+                    hi: "45%",
+                    en: "45%"
+                },
+                rainfall: {
+                    hi: "10%",
+                    en: "10%"
+                },
+                uvIndex: 6,
+                forecast: [
+                    { 
+                        day: { hi: "आज", en: "Today" }, 
+                        temp: "32°C", 
+                        condition: { hi: "धूप", en: "Sunny" }, 
+                        icon: "fa-sun" 
+                    },
+                    { 
+                        day: { hi: "कल", en: "Tomorrow" }, 
+                        temp: "31°C", 
+                        condition: { hi: "बादल", en: "Cloudy" }, 
+                        icon: "fa-cloud" 
+                    }
+                ]
+            },
+            // Expanded product list with 50+ items
+            products: [
+                // Seeds (15 items)
+                { id: 1, name: { hi: "गेहूं बीज (HD-2967)", en: "Wheat Seeds (HD-2967)" }, description: { hi: "उच्च उपज वाली किस्म", en: "High yield variety" }, category: "seeds", price: 2500 },
+                { id: 2, name: { hi: "धान बीज (Pusa-44)", en: "Paddy Seeds (Pusa-44)" }, description: { hi: "बासमती धान के लिए", en: "For basmati rice" }, category: "seeds", price: 3200 },
+                { id: 3, name: { hi: "मक्का बीज (HQPM-1)", en: "Maize Seeds (HQPM-1)" }, description: { hi: "संकर किस्म", en: "Hybrid variety" }, category: "seeds", price: 1800 },
+                { id: 4, name: { hi: "चना बीज (Pusa-362)", en: "Chickpea Seeds (Pusa-362)" }, description: { hi: "रोग प्रतिरोधी", en: "Disease resistant" }, category: "seeds", price: 5200 },
+                { id: 5, name: { hi: "सोयाबीन बीज (JS-335)", en: "Soybean Seeds (JS-335)" }, description: { hi: "उच्च प्रोटीन", en: "High protein" }, category: "seeds", price: 4200 },
+                { id: 6, name: { hi: "सरसों बीज (RH-749)", en: "Mustard Seeds (RH-749)" }, description: { hi: "तेल की अच्छी मात्रा", en: "Good oil content" }, category: "seeds", price: 2800 },
+                { id: 7, name: { hi: "अरहर बीज (UPAS-120)", en: "Pigeon Pea Seeds (UPAS-120)" }, description: { hi: "दाल के लिए उत्तम", en: "Excellent for pulses" }, category: "seeds", price: 3800 },
+                { id: 8, name: { hi: "मूंग बीज (SML-668)", en: "Mung Bean Seeds (SML-668)" }, description: { hi: "ग्रीष्मकालीन फसल", en: "Summer crop" }, category: "seeds", price: 3200 },
+                { id: 9, name: { hi: "उड़द बीज (PU-31)", en: "Black Gram Seeds (PU-31)" }, description: { hi: "उच्च उपज", en: "High yield" }, category: "seeds", price: 3500 },
+                { id: 10, name: { hi: "मटर बीज (AP-3)", en: "Pea Seeds (AP-3)" }, description: { hi: "सब्जी के लिए", en: "For vegetables" }, category: "seeds", price: 2200 },
+                { id: 11, name: { hi: "ज्वार बीज (CSH-16)", en: "Sorghum Seeds (CSH-16)" }, description: { hi: "सूखा सहनशील", en: "Drought tolerant" }, category: "seeds", price: 1900 },
+                { id: 12, name: { hi: "बाजरा बीज (HHB-67)", en: "Pearl Millet Seeds (HHB-67)" }, description: { hi: "शुष्क क्षेत्रों के लिए", en: "For dry areas" }, category: "seeds", price: 2100 },
+                { id: 13, name: { hi: "तिल बीज (RT-46)", en: "Sesame Seeds (RT-46)" }, description: { hi: "तेल फसल", en: "Oil crop" }, category: "seeds", price: 4500 },
+                { id: 14, name: { hi: "मूंगफली बीज (GG-20)", en: "Groundnut Seeds (GG-20)" }, description: { hi: "तेल और खाद्य", en: "Oil and food" }, category: "seeds", price: 4800 },
+                { id: 15, name: { hi: "सूरजमुखी बीज (KBSH-44)", en: "Sunflower Seeds (KBSH-44)" }, description: { hi: "तेल फसल", en: "Oil crop" }, category: "seeds", price: 5200 },
+                
+                // Fertilizers (15 items)
+                { id: 16, name: { hi: "यूरिया (46% N)", en: "Urea (46% N)" }, description: { hi: "नाइट्रोजन उर्वरक", en: "Nitrogen fertilizer" }, category: "fertilizer", price: 280 },
+                { id: 17, name: { hi: "डीएपी (18:46:0)", en: "DAP (18:46:0)" }, description: { hi: "फॉस्फोरस उर्वरक", en: "Phosphorus fertilizer" }, category: "fertilizer", price: 1200 },
+                { id: 18, name: { hi: "एमओपी (60% K2O)", en: "MOP (60% K2O)" }, description: { hi: "पोटाश उर्वरक", en: "Potash fertilizer" }, category: "fertilizer", price: 1500 },
+                { id: 19, name: { hi: "एनपीके (10:26:26)", en: "NPK (10:26:26)" }, description: { hi: "संतुलित उर्वरक", en: "Balanced fertilizer" }, category: "fertilizer", price: 1100 },
+                { id: 20, name: { hi: "जिंक सल्फेट", en: "Zinc Sulphate" }, description: { hi: "सूक्ष्म पोषक तत्व", en: "Micronutrient" }, category: "fertilizer", price: 450 },
+                { id: 21, name: { hi: "बोरान पाउडर", en: "Boron Powder" }, description: { hi: "सूक्ष्म पोषक तत्व", en: "Micronutrient" }, category: "fertilizer", price: 680 },
+                { id: 22, name: { hi: "जैविक खाद", en: "Organic Manure" }, description: { hi: "केंचुआ खाद", en: "Vermicompost" }, category: "fertilizer", price: 320 },
+                { id: 23, name: { hi: "नीम की खली", en: "Neem Cake" }, description: { hi: "जैविक कीटनाशक", en: "Organic pesticide" }, category: "fertilizer", price: 580 },
+                { id: 24, name: { hi: "रॉक फॉस्फेट", en: "Rock Phosphate" }, description: { hi: "प्राकृतिक फॉस्फोरस", en: "Natural phosphorus" }, category: "fertilizer", price: 720 },
+                { id: 25, name: { hi: "जिप्सम पाउडर", en: "Gypsum Powder" }, description: { hi: "कैल्शियम सल्फेट", en: "Calcium sulphate" }, category: "fertilizer", price: 380 },
+                { id: 26, name: { hi: "एज़ोस्पिरिलम", en: "Azospirillum" }, description: { hi: "जैव उर्वरक", en: "Biofertilizer" }, category: "fertilizer", price: 220 },
+                { id: 27, name: { hi: "फॉस्फोबैक्टीरिया", en: "Phosphobacteria" }, description: { hi: "जैव उर्वरक", en: "Biofertilizer" }, category: "fertilizer", price: 240 },
+                { id: 28, name: { hi: "पोटाश घोलक जीवाणु", en: "Potash Solubilizing Bacteria" }, description: { hi: "जैव उर्वरक", en: "Biofertilizer" }, category: "fertilizer", price: 260 },
+                { id: 29, name: { hi: "ह्यूमिक एसिड", en: "Humic Acid" }, description: { hi: "मिट्टी सुधारक", en: "Soil conditioner" }, category: "fertilizer", price: 850 },
+                { id: 30, name: { hi: "सल्फर कोटेड यूरिया", en: "Sulfur Coated Urea" }, description: { hi: "धीमी रिलीज उर्वरक", en: "Slow release fertilizer" }, category: "fertilizer", price: 420 },
+                
+                // Pesticides (15 items)
+                { id: 31, name: { hi: "इमिडाक्लोप्रिड 17.8%", en: "Imidacloprid 17.8%" }, description: { hi: "कीटनाशक", en: "Insecticide" }, category: "pesticide", price: 1200 },
+                { id: 32, name: { hi: "कार्बेन्डाजिम 50%", en: "Carbendazim 50%" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 980 },
+                { id: 33, name: { hi: "मैन्कोज़ेब 75%", en: "Mancozeb 75%" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 850 },
+                { id: 34, name: { hi: "एसिटामिप्रिड 20%", en: "Acetamiprid 20%" }, description: { hi: "कीटनाशक", en: "Insecticide" }, category: "pesticide", price: 1100 },
+                { id: 35, name: { hi: "क्लोरपाइरीफॉस 20%", en: "Chlorpyrifos 20%" }, description: { hi: "कीटनाशक", en: "Insecticide" }, category: "pesticide", price: 950 },
+                { id: 36, name: { hi: "प्रोपिकोनाजोल 25%", en: "Propiconazole 25%" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 1250 },
+                { id: 37, name: { hi: "थायमेथोक्साम 25%", en: "Thiamethoxam 25%" }, description: { hi: "कीटनाशक", en: "Insecticide" }, category: "pesticide", price: 1350 },
+                { id: 38, name: { hi: "नीम का तेल", en: "Neem Oil" }, description: { hi: "जैव कीटनाशक", en: "Biopesticide" }, category: "pesticide", price: 680 },
+                { id: 39, name: { hi: "गोमूत्र अर्क", en: "Cow Urine Extract" }, description: { hi: "जैव कीटनाशक", en: "Biopesticide" }, category: "pesticide", price: 320 },
+                { id: 40, name: { hi: "बीटी किट", en: "BT Kit" }, description: { hi: "जैव कीटनाशक", en: "Biopesticide" }, category: "pesticide", price: 450 },
+                { id: 41, name: { hi: "ट्राइकोडर्मा", en: "Trichoderma" }, description: { hi: "जैव फफूंदनाशक", en: "Biofungicide" }, category: "pesticide", price: 280 },
+                { id: 42, name: { hi: "प्स्यूडोमोनास", en: "Pseudomonas" }, description: { hi: "जैव फफूंदनाशक", en: "Biofungicide" }, category: "pesticide", price: 320 },
+                { id: 43, name: { hi: "गंधक का घोल", en: "Sulfur Solution" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 580 },
+                { id: 44, name: { hi: "बोर्डो मिश्रण", en: "Bordeaux Mixture" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 420 },
+                { id: 45, name: { hi: "कॉपर ऑक्सीक्लोराइड", en: "Copper Oxychloride" }, description: { hi: "फफूंदनाशक", en: "Fungicide" }, category: "pesticide", price: 650 },
+                
+                // Tools (15 items)
+                { id: 46, name: { hi: "खुरपी", en: "Trowel" }, description: { hi: "हाथ से खुदाई", en: "Hand digging tool" }, category: "tools", price: 180 },
+                { id: 47, name: { hi: "कुदाल", en: "Spade" }, description: { hi: "मिट्टी खोदने", en: "Soil digging" }, category: "tools", price: 320 },
+                { id: 48, name: { hi: "फावड़ा", en: "Shovel" }, description: { hi: "मिट्टी ढोने", en: "Soil carrying" }, category: "tools", price: 450 },
+                { id: 49, name: { hi: "दरांती", en: "Sickle" }, description: { hi: "फसल कटाई", en: "Crop harvesting" }, category: "tools", price: 220 },
+                { id: 50, name: { hi: "कैंची", en: "Pruner" }, description: { hi: "कटाई-छंटाई", en: "Pruning tool" }, category: "tools", price: 380 },
+                { id: 51, name: { hi: "पम्प सेट", en: "Pump Set" }, description: { hi: "सिंचाई के लिए", en: "For irrigation" }, category: "tools", price: 8500 },
+                { id: 52, name: { hi: "ड्रिप इरीगेशन किट", en: "Drip Irrigation Kit" }, description: { hi: "पानी बचाने", en: "Water saving" }, category: "tools", price: 12000 },
+                { id: 53, name: { hi: "स्प्रेयर मशीन", en: "Sprayer Machine" }, description: { hi: "छिड़काव के लिए", en: "For spraying" }, category: "tools", price: 3200 },
+                { id: 54, name: { hi: "हैंड स्प्रेयर", en: "Hand Sprayer" }, description: { hi: "हाथ से छिड़काव", en: "Manual spraying" }, category: "tools", price: 850 },
+                { id: 55, name: { hi: "मृदा परीक्षण किट", en: "Soil Testing Kit" }, description: { hi: "मिट्टी जांच", en: "Soil testing" }, category: "tools", price: 2800 },
+                { id: 56, name: { hi: "फसल सुरक्षा जाल", en: "Crop Protection Net" }, description: { hi: "पक्षियों से बचाव", en: "Bird protection" }, category: "tools", price: 1800 },
+                { id: 57, name: { hi: "ग्रीनहाउस शीट", en: "Greenhouse Sheet" }, description: { hi: "संरक्षित खेती", en: "Protected cultivation" }, category: "tools", price: 4500 },
+                { id: 58, name: { hi: "बीज बोने की मशीन", en: "Seed Drill Machine" }, description: { hi: "बीजारोपण", en: "Seed sowing" }, category: "tools", price: 25000 },
+                { id: 59, name: { hi: "हार्वेस्टर मशीन", en: "Harvester Machine" }, description: { hi: "फसल कटाई", en: "Crop harvesting" }, category: "tools", price: 150000 },
+                { id: 60, name: { hi: "ट्रैक्टर एक्सेसरीज", en: "Tractor Accessories" }, description: { hi: "ट्रैक्टर के लिए", en: "For tractor" }, category: "tools", price: 8500 }
+            ],
+            seasonalCrops: [
+                { 
+                    season: { hi: "गर्मी", en: "Summer" }, 
+                    crops: { hi: "चावल, मक्का", en: "Rice, Maize" }, 
+                    icon: "fa-sun" 
+                },
+                { 
+                    season: { hi: "मानसून", en: "Monsoon" }, 
+                    crops: { hi: "धान, सोयाबीन", en: "Paddy, Soybean" }, 
+                    icon: "fa-cloud-rain" 
+                }
+            ],
+            marketPrices: [
+                {
+                    crop: { hi: "गेहूं", en: "Wheat" },
+                    grade: { hi: "ए ग्रेड", en: "A Grade" },
+                    price: 2250,
+                    change: 50,
+                    trend: "up"
+                },
+                {
+                    crop: { hi: "चावल", en: "Rice" },
+                    grade: { hi: "बासमती", en: "Basmati" },
+                    price: 3500,
+                    change: -120,
+                    trend: "down"
+                }
+            ],
+            cropCalendar: {
+                january: { hi: "गेहूं, सरसों, चना", en: "Wheat, Mustard, Chickpea" },
+                february: { hi: "गेहूं, सरसों, आलू", en: "Wheat, Mustard, Potato" },
+                march: { hi: "गेहूं, चना, मक्का", en: "Wheat, Chickpea, Maize" },
+                april: { hi: "मक्का, मूंग, उड़द", en: "Maize, Mung Bean, Black Gram" },
+                may: { hi: "मूंग, उड़द, मूंगफली", en: "Mung Bean, Black Gram, Groundnut" },
+                june: { hi: "धान, सोयाबीन, अरहर", en: "Paddy, Soybean, Pigeon Pea" },
+                july: { hi: "धान, सोयाबीन, मक्का", en: "Paddy, Soybean, Maize" },
+                august: { hi: "धान, सोयाबीन, मूंग", en: "Paddy, Soybean, Mung Bean" },
+                september: { hi: "धान, सोयाबीन, मक्का", en: "Paddy, Soybean, Maize" },
+                october: { hi: "गेहूं, सरसों, चना", en: "Wheat, Mustard, Chickpea" },
+                november: { hi: "गेहूं, सरसों, मटर", en: "Wheat, Mustard, Pea" },
+                december: { hi: "गेहूं, सरसों, चना", en: "Wheat, Mustard, Chickpea" }
+            },
+            productLinks: {
+                "गेहूं बीज (HD-2967)": {
+                    amazon: "https://www.amazon.in/s?k=wheat+seeds",
+                    flipkart: "https://www.flipkart.com/search?q=wheat+seeds"
+                }
+            },
+            cropDiseases: {
+                "tomato": {
+                    name: {
+                        hi: "टमाटर का झुलसा रोग",
+                        en: "Tomato Blight Disease"
+                    },
+                    solution: {
+                        hi: "बोर्डो मिश्रण (0.8%) या कॉपर ऑक्सीक्लोराइड (0.3%) का छिड़काव करें",
+                        en: "Spray Bordeaux mixture (0.8%) or Copper Oxychloride (0.3%)"
+                    },
+                    prevention: {
+                        hi: "रोगरोधी किस्में लगाएं, फसल चक्र अपनाएं",
+                        en: "Plant disease-resistant varieties, adopt crop rotation"
+                    }
+                }
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'hi';
+        let stream = null;
+        let currentFacingMode = 'environment';
+        let currentCalendarMonth = 0; // 0 = January
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserPreferences();
+            loadProducts();
+            loadSeasonalCrops();
+            updateWeatherData();
+            loadMarketPrices();
+            
+            // Set up camera event listeners
+            document.getElementById('captureBtn').addEventListener('click', captureImage);
+            document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
+            document.getElementById('closeCameraBtn').addEventListener('click', stopCamera);
+        });
+
+        // Load user preferences from localStorage
+        function loadUserPreferences() {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'hi';
+            document.getElementById('languageSelector').value = savedLang;
+            changeLanguage(savedLang);
+        }
+
+        // Language selector functionality
+        document.getElementById('languageSelector').addEventListener('change', function() {
+            const selectedLang = this.value;
+            localStorage.setItem('preferredLanguage', selectedLang);
+            changeLanguage(selectedLang);
+        });
+
+        // Change language function
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Add animation class
+            document.body.classList.add('language-change');
+            
+            // Update all text content
+            updateTextContent(lang);
+            
+            // Update dynamic content
+            updateWeatherData();
+            loadProducts();
+            loadSeasonalCrops();
+            loadMarketPrices();
+            updateCalendar();
+            
+            // Remove animation class after transition
+            setTimeout(() => {
+                document.body.classList.remove('language-change');
+            }, 500);
+        }
+
+        // Update all text content based on language
+        function updateTextContent(lang) {
+            // Update all elements with data-translate attribute
+            const elements = document.querySelectorAll('[id]');
+            elements.forEach(element => {
+                const key = element.id;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        // Load products from simulated backend
+        function loadProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            
+            backendData.products.forEach(product => {
+                const li = document.createElement('li');
+                li.className = 'crop-item';
+                li.dataset.category = product.category;
+                li.innerHTML = `
+                    <div>
+                        <h4>${product.name[currentLanguage]}</h4>
+                        <p>${product.description[currentLanguage]} - ₹${product.price}/unit</p>
+                    </div>
+                    <button class="buy-btn" onclick="showProductLinks('${product.name.hi}')">${translations[currentLanguage]['buy-btn']}</button>
+                `;
+                productList.appendChild(li);
+            });
+        }
+
+        // Filter products by category
+        function filterProducts(category) {
+            const productItems = document.querySelectorAll('.crop-item');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            filterButtons.forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Show/hide products based on category
+            productItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Load seasonal crops from simulated backend
+        function loadSeasonalCrops() {
+            const seasonalCropsContainer = document.getElementById('seasonal-crops');
+            seasonalCropsContainer.innerHTML = '';
+            
+            backendData.seasonalCrops.forEach(season => {
+                const div = document.createElement('div');
+                div.className = 'weather-detail';
+                div.innerHTML = `
+                    <i class="fas ${season.icon}"></i>
+                    <span>${season.season[currentLanguage]}</span>
+                    <span>${season.crops[currentLanguage]}</span>
+                `;
+                seasonalCropsContainer.appendChild(div);
+            });
+        }
+
+        // Update weather data from simulated backend
+        function updateWeatherData() {
+            document.getElementById('location').textContent = backendData.weather.location[currentLanguage];
+            document.getElementById('temperature').textContent = backendData.weather.temperature + '°C';
+            document.getElementById('wind-speed').textContent = backendData.weather.windSpeed[currentLanguage];
+            document.getElementById('humidity').textContent = backendData.weather.humidity[currentLanguage];
+            document.getElementById('rainfall').textContent = backendData.weather.rainfall[currentLanguage];
+            document.getElementById('uv-index').textContent = backendData.weather.uvIndex;
+        }
+
+        // Load market prices from simulated backend
+        function loadMarketPrices() {
+            const marketTable = document.getElementById('market-prices-data');
+            marketTable.innerHTML = '';
+            
+            backendData.marketPrices.forEach(item => {
+                const tr = document.createElement('tr');
+                const changeClass = item.trend === 'up' ? 'price-up' : 'price-down';
+                const changeSymbol = item.trend === 'up' ? '↗' : '↘';
+                
+                tr.innerHTML = `
+                    <td>${item.crop[currentLanguage]}</td>
+                    <td>${item.grade[currentLanguage]}</td>
+                    <td>₹${item.price.toLocaleString()}</td>
+                    <td class="${changeClass}">${changeSymbol} ₹${Math.abs(item.change)}</td>
+                `;
+                marketTable.appendChild(tr);
+            });
+        }
+
+        // Update crop calendar
+        function updateCalendar() {
+            const monthNames = [
+                "january", "february", "march", "april", "may", "june",
+                "july", "august", "september", "october", "november", "december"
+            ];
+            
+            const currentMonth = monthNames[currentCalendarMonth];
+            const monthDisplay = document.getElementById('calendar-month');
+            monthDisplay.textContent = `${translations[currentLanguage][currentMonth]} 2023`;
+            
+            const calendarGrid = document.getElementById('calendar-days');
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const days = currentLanguage === 'hi' ? 
+                ['सो', 'मो', 'बु', 'गु', 'शु', 'श', 'र'] : 
+                ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Add dates with crop information
+            const daysInMonth = 31; // Simplified for demo
+            const monthCrops = backendData.cropCalendar[currentMonth][currentLanguage];
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateElement = document.createElement('div');
+                dateElement.className = 'calendar-date';
+                
+                // Mark some dates as active (sowing/harvesting days)
+                if (i % 7 === 0 || i % 10 === 0) {
+                    dateElement.classList.add('active');
+                }
+                
+                dateElement.innerHTML = `
+                    <div>${i}</div>
+                    <div class="calendar-crops">${i % 7 === 0 ? monthCrops.split(',')[0] : ''}</div>
+                `;
+                calendarGrid.appendChild(dateElement);
+            }
+        }
+
+        // Change calendar month
+        function changeCalendarMonth(direction) {
+            currentCalendarMonth += direction;
+            
+            if (currentCalendarMonth < 0) {
+                currentCalendarMonth = 11;
+            } else if (currentCalendarMonth > 11) {
+                currentCalendarMonth = 0;
+            }
+            
+            updateCalendar();
+        }
+
+        // Show crop calendar modal
+        function showCropCalendar() {
+            updateCalendar();
+            document.getElementById('calendarModal').style.display = 'flex';
+        }
+
+        // Show weather forecast modal
+        function showWeatherForecast() {
+            const forecastContainer = document.getElementById('weather-forecast-data');
+            forecastContainer.innerHTML = '';
+            
+            backendData.weather.forecast.forEach(day => {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.padding = '10px';
+                div.style.borderBottom = '1px solid #eee';
+                div.innerHTML = `
+                    <div>${day.day[currentLanguage]}</div>
+                    <div><i class="fas ${day.icon}"></i> ${day.condition[currentLanguage]}</div>
+                    <div>${day.temp}</div>
+                `;
+                forecastContainer.appendChild(div);
+            });
+            
+            document.getElementById('weatherModal').style.display = 'flex';
+        }
+
+        // Set weather alert
+        function setWeatherAlert() {
+            const alertMessages = {
+                hi: 'मौसम अलर्ट सक्रिय किया गया! आपको मौसम में बदलाव होने पर सूचना मिलेगी।',
+                en: 'Weather alert activated! You will be notified when weather changes occur.'
+            };
+            
+            alert(alertMessages[currentLanguage]);
+        }
+
+        // Show product links modal
+        function showProductLinks(productName) {
+            document.getElementById('product-modal-title').textContent = productName + ' - ' + translations[currentLanguage]['buy-btn'];
+            
+            const linksContainer = document.getElementById('product-links');
+            linksContainer.innerHTML = '';
+            
+            if (backendData.productLinks[productName]) {
+                const amazonLink = document.createElement('a');
+                amazonLink.href = backendData.productLinks[productName].amazon;
+                amazonLink.target = '_blank';
+                amazonLink.style.display = 'block';
+                amazonLink.style.padding = '10px';
+                amazonLink.style.margin = '10px 0';
+                amazonLink.style.backgroundColor = '#ff9900';
+                amazonLink.style.color = 'white';
+                amazonLink.style.textAlign = 'center';
+                amazonLink.style.borderRadius = '5px';
+                amazonLink.textContent = 'Amazon ' + (currentLanguage === 'hi' ? 'पर खरीदें' : 'Buy on');
+                amazonLink.rel = 'noopener noreferrer';
+                linksContainer.appendChild(amazonLink);
+                
+                const flipkartLink = document.createElement('a');
+                flipkartLink.href = backendData.productLinks[productName].flipkart;
+                flipkartLink.target = '_blank';
+                flipkartLink.style.display = 'block';
+                flipkartLink.style.padding = '10px';
+                flipkartLink.style.margin = '10px 0';
+                flipkartLink.style.backgroundColor = '#047bd5';
+                flipkartLink.style.color = 'white';
+                flipkartLink.style.textAlign = 'center';
+                flipkartLink.style.borderRadius = '5px';
+                flipkartLink.textContent = 'Flipkart ' + (currentLanguage === 'hi' ? 'पर खरीदें' : 'Buy on');
+                flipkartLink.rel = 'noopener noreferrer';
+                linksContainer.appendChild(flipkartLink);
+            } else {
+                linksContainer.innerHTML = '<p>' + (currentLanguage === 'hi' ? 'इस उत्पाद के लिए लिंक उपलब्ध नहीं है' : 'Links not available for this product') + '</p>';
+            }
+            
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        // Activate camera for crop scanning
+        async function activateCamera() {
+            try {
+                const cameraPreview = document.getElementById('cameraPreview');
+                const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+                const cameraControls = document.getElementById('cameraControls');
+                
+                // Stop any existing stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Get camera access
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode }
+                });
+                
+                // Show camera feed
+                cameraPreview.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                cameraPlaceholder.style.display = 'none';
+                cameraControls.style.display = 'flex';
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                const messages = {
+                    hi: 'कैमरा एक्सेस में समस्या। कृपया कैमरा अनुमति की जाँच करें।',
+                    en: 'Camera access issue. Please check camera permissions.'
+                };
+                alert(messages[currentLanguage]);
+            }
+        }
+
+        // Switch between front and back camera
+        async function switchCamera() {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            await activateCamera();
+        }
+
+        // Stop camera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            const cameraPreview = document.getElementById('cameraPreview');
+            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            const cameraControls = document.getElementById('cameraControls');
+            
+            cameraPreview.style.display = 'none';
+            cameraPlaceholder.style.display = 'flex';
+            cameraControls.style.display = 'none';
+        }
+
+        // Capture image from camera
+        function captureImage() {
+            const cameraPreview = document.getElementById('cameraPreview');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = cameraPreview.videoWidth;
+            canvas.height = cameraPreview.videoHeight;
+            context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL and display
+            const imageDataURL = canvas.toDataURL('image/jpeg');
+            cameraPreview.src = imageDataURL;
+            
+            // Stop camera stream
+            stopCamera();
+            
+            // Show analysis message
+            const messages = {
+                hi: 'तस्वीर ली गई! विश्लेषण किया जा रहा है...',
+                en: 'Photo captured! Analyzing...'
+            };
+            
+            alert(messages[currentLanguage]);
+            
+            // Simulate analysis after delay
+            setTimeout(() => {
+                analyzeCrop('tomato');
+            }, 2000);
+        }
+
+        // Upload image for analysis
+        function uploadImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file type
+                    if (!file.type.match('image.*')) {
+                        const errorMessages = {
+                            hi: 'कृपया एक वैध छवि फ़ाइल चुनें',
+                            en: 'Please select a valid image file'
+                        };
+                        alert(errorMessages[currentLanguage]);
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Show preview
+                        const cameraPreview = document.getElementById('cameraPreview');
+                        const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+                        
+                        cameraPreview.src = e.target.result;
+                        cameraPreview.style.display = 'block';
+                        cameraPlaceholder.style.display = 'none';
+                        
+                        const uploadMessages = {
+                            hi: 'तस्वीर अपलोड की गई! विश्लेषण किया जा रहा है...',
+                            en: 'Image uploaded! Analyzing...'
+                        };
+                        
+                        alert(uploadMessages[currentLanguage]);
+                        // Simulate image analysis after 2 seconds
+                        setTimeout(() => {
+                            analyzeCrop('wheat');
+                        }, 2000);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        // Analyze crop image (simulated)
+        function analyzeCrop(cropType) {
+            try {
+                const disease = backendData.cropDiseases[cropType];
+                if (!disease) {
+                    throw new Error('Crop type not recognized');
+                }
+                
+                const resultContainer = document.getElementById('analysis-result');
+                
+                resultContainer.innerHTML = `
+                    <h4>${translations[currentLanguage]['analysis-modal-title']}: ${disease.name[currentLanguage]}</h4>
+                    <p><strong>${currentLanguage === 'hi' ? 'समाधान:' : 'Solution:'}</strong> ${disease.solution[currentLanguage]}</p>
+                    <p><strong>${currentLanguage === 'hi' ? 'रोकथाम:' : 'Prevention:'}</strong> ${disease.prevention[currentLanguage]}</p>
+                    <div style="margin-top: 20px;">
+                        <button class="action-btn primary-btn" style="width: 100%;" onclick="closeModal('analysisModal')">
+                            <i class="fas fa-check"></i> ${currentLanguage === 'hi' ? 'ठीक है' : 'OK'}
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('analysisModal').style.display = 'flex';
+            } catch (error) {
+                document.getElementById('analysis-result').innerHTML = `
+                    <p style="color: red;">${currentLanguage === 'hi' ? 'त्रुटि:' : 'Error:'} ${error.message}</p>
+                    <p>${currentLanguage === 'hi' ? 'कृपया किसी अन्य फसल की तस्वीर लें' : 'Please take a photo of another crop'}</p>
+                    <div style="margin-top: 20px;">
+                        <button class="action-btn primary-btn" style="width: 100%;" onclick="closeModal('analysisModal')">
+                            <i class="fas fa-check"></i> ${currentLanguage === 'hi' ? 'ठीक है' : 'OK'}
+                        </button>
+                    </div>
+                `;
+                document.getElementById('analysisModal').style.display = 'flex';
+            }
+        }
+
+        // Refresh market prices
+        function refreshMarketPrices() {
+            const messages = {
+                hi: 'बाजार भाव अपडेट किए जा रहे हैं...',
+                en: 'Updating market prices...'
+            };
+            
+            alert(messages[currentLanguage]);
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Randomly update some prices to simulate fresh data
+                backendData.marketPrices.forEach(item => {
+                    const change = Math.random() > 0.5 ? 50 : -50;
+                    item.price += change;
+                    item.change = change;
+                    item.trend = change > 0 ? 'up' : 'down';
+                });
+                
+                loadMarketPrices();
+                
+                const successMessages = {
+                    hi: 'बाजार भाव सफलतापूर्वक अपडेट किए गए!',
+                    en: 'Market prices updated successfully!'
+                };
+                
+                alert(successMessages[currentLanguage]);
+            }, 1500);
+        }
+
+        // Show price trends
+        function showPriceTrends() {
+            document.getElementById('trendsModal').style.display = 'flex';
+            
+            // In a real app, this would show a chart with price trends
+            // For this demo, we'll just show a message
+            const trendsContainer = document.getElementById('trends-chart');
+            trendsContainer.innerHTML = `
+                <p style="text-align: center; padding: 20px;">
+                    ${currentLanguage === 'hi' 
+                        ? 'यहां फसल मूल्य रुझान चार्ट दिखाई देगा। वास्तविक अनुप्रयोग में, यह API से वास्तविक डेटा प्रदर्शित करेगा।' 
+                        : 'Crop price trends chart would appear here. In a real application, this would display actual data from an API.'}
+                </p>
+                <div style="display: flex; justify-content: center;">
+                    <i class="fas fa-chart-line" style="font-size: 48px; color: #4caf50; margin: 20px;"></i>
+                </div>
+            `;
+        }
+
+        // Show learning resources
+        function showLearningResources() {
+            const messages = {
+                hi: 'कृषि संसाधन दिखाया जा रहा है...',
+                en: 'Showing agricultural resources...'
+            };
+            alert(messages[currentLanguage]);
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>
